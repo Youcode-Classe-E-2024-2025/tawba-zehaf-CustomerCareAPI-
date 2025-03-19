@@ -5,6 +5,62 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/tickets/{ticketId}/logs": {
+            "get": {
+                "tags": [
+                    "Activity Logs"
+                ],
+                "summary": "Get activity logs for a ticket",
+                "operationId": "379d7c07236b73bb28021cbdfe269160",
+                "parameters": [
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "description": "ID of the ticket",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of activity logs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "ticket_id": {
+                                                "type": "integer"
+                                            },
+                                            "action": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "datetime"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found"
+                    }
+                }
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -298,6 +354,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Activity Logs",
+            "description": "API Endpoints for ticket activity logs"
+        },
         {
             "name": "Authentication",
             "description": "Authentication"
