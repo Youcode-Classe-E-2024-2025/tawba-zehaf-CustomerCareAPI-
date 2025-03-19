@@ -7,7 +7,12 @@ use App\Services\TicketService;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 
-
+/**
+ * @OA\Info(
+ *     version="1.0.0",
+ *     title="Ticket API"
+ * )
+ */
 class TicketController extends Controller
 {
     protected $ticketService;
