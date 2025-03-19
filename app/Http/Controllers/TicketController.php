@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Ticket;
+
 use App\Services\TicketService;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
@@ -14,52 +15,39 @@ class TicketController extends Controller
         $this->ticketService = $ticketService;
     }
 
-    /**
-     * Créer un nouveau ticket.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    // public function store(Request $request)
-    // {
-    //     $ticket = $this->ticketService->createTicket($request->all());
-    //     return response()->json($ticket, 201);
-    // }
+    // Créer un nouveau ticket
+    public function store(Request $request)
+    {
+        $ticket = $this->ticketService->createTicket($request->all());
+        return response()->json($ticket, 201);
+    }
 
-    /**
-     * Récupérer tous les tickets.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // Récupérer tous les tickets
     public function index()
     {
         $tickets = $this->ticketService->getAllTickets();
         return response()->json($tickets);
     }
 
-    /**
-     * Mettre à jour le statut d'un ticket.
-     *
-     * @param Request $request
-     * @param int $ticketId
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // Mettre à jour un ticket
     public function updateStatus(Request $request, $ticketId)
     {
-        $ticket = Ticket::findOrFail($ticketId);
-        $ticket = $this->ticketService->updateTicketStatus($ticket, $request->status);
+        $ticket = Ticket::where('id', $ticketId)->firstOrFail();
+        $updatedTicket = $this->ticketService->updateTicketStatus($ticket, $request->status);
+        return response()->json($updatedTicket);
+    }
+
+    // Afficher un ticket
+    public function show($ticketId)
+    {
+        $ticket = $this->ticketService->getTicketById($ticketId);
         return response()->json($ticket);
     }
-    public function store(Request $request)
-{
-    $ticket = Ticket::create([
-        'title' => $request->title,
-        'description' => $request->description,
-        'status' => 'open',  // Statut initial
-        'priority' => $request->priority,
-        'client_id' => $request->user()->id,  // Associer le ticket au client connecté
-    ]);
-    return response()->json($ticket, 201);
-}
 
+    // Supprimer un ticket
+    public function destroy($ticketId)
+    {
+        $this->ticketService->deleteTicket($ticketId);
+        return response()->json(['message' => 'Ticket deleted successfully']);
+    }
 }

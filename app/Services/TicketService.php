@@ -3,41 +3,60 @@
 namespace App\Services;
 
 use App\Models\Ticket;
+use App\Models\ActivityLog;
+use App\Models\Response;
 
 class TicketService
 {
-    /**
-     * Créer un nouveau ticket.
-     *
-     * @param array $data
-     * @return Ticket
-     */
     public function createTicket(array $data)
     {
-        return Ticket::create($data);
+        $ticket = Ticket::create($data);
+
+        // Enregistrement de l'action dans ActivityLog
+        ActivityLog::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => $data['client_id'],
+            'action' => 'ticket_created',
+        ]);
+
+        return $ticket;
     }
 
-    /**
-     * Mettre à jour le statut du ticket.
-     *
-     * @param Ticket $ticket
-     * @param string $status
-     * @return Ticket
-     */
+    public function getAllTickets()
+    {
+        return Ticket::all();
+    }
+
+    public function getTicketById($ticketId)
+    {
+        return Ticket::findOrFail($ticketId);
+    }
+
     public function updateTicketStatus(Ticket $ticket, string $status)
     {
         $ticket->status = $status;
         $ticket->save();
+
+        // Enregistrement de l'action dans ActivityLog
+        ActivityLog::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => $ticket->client_id,
+            'action' => 'status_updated',
+        ]);
+
         return $ticket;
     }
 
-    /**
-     * Récupérer tous les tickets.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getAllTickets()
+    public function deleteTicket($ticketId)
     {
-        return Ticket::all();
+        $ticket = Ticket::findOrFail($ticketId);
+        $ticket->delete();
+
+        // Enregistrement de l'action dans ActivityLog
+        ActivityLog::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => $ticket->client_id,
+            'action' => 'ticket_deleted',
+        ]);
     }
 }
