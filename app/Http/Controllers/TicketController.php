@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Ticket;
 use App\Services\TicketService;
 use Illuminate\Http\Request;
 
@@ -20,11 +20,11 @@ class TicketController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
-    {
-        $ticket = $this->ticketService->createTicket($request->all());
-        return response()->json($ticket, 201);
-    }
+    // public function store(Request $request)
+    // {
+    //     $ticket = $this->ticketService->createTicket($request->all());
+    //     return response()->json($ticket, 201);
+    // }
 
     /**
      * Récupérer tous les tickets.
@@ -50,4 +50,16 @@ class TicketController extends Controller
         $ticket = $this->ticketService->updateTicketStatus($ticket, $request->status);
         return response()->json($ticket);
     }
+    public function store(Request $request)
+{
+    $ticket = Ticket::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'status' => 'open',  // Statut initial
+        'priority' => $request->priority,
+        'client_id' => $request->user()->id,  // Associer le ticket au client connecté
+    ]);
+    return response()->json($ticket, 201);
+}
+
 }
