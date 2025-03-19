@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Ticket;
 use App\Models\ActivityLog;
-use App\Models\Response;
+use App\Models\Message;
 
 class TicketService
 {
