@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
-use App\Services\TicketService;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 
@@ -15,8 +13,6 @@ use Illuminate\Http\Request;
  */
 class TicketController extends Controller
 {
-    protected $ticketService;
-
     /**
      * @OA\Post(
      *     path="/tickets",
@@ -25,7 +21,14 @@ class TicketController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         description="Ticket data",
-     *         @OA\JsonContent()
+     *         @OA\JsonContent(
+     *             required={"title", "description", "status", "priority", "client_id"},
+     *             @OA\Property(property="title", type="string"),
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="status", type="string"),
+     *             @OA\Property(property="priority", type="string"),
+     *             @OA\Property(property="client_id", type="integer")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -35,8 +38,17 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-        // ...existing code...
-        $ticket = $this->ticketService->createTicket($request->all());
+        $data = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'status' => 'required|string',
+            'priority' => 'required|string',
+            'client_id' => 'required|integer',
+            'agent_id' => 'nullable|integer',
+        ]);
+
+        $ticket = Ticket::create($data);
+
         return response()->json($ticket, 201);
     }
 
@@ -53,9 +65,34 @@ class TicketController extends Controller
      */
     public function index()
     {
-        // ...existing code...
-        $tickets = $this->ticketService->getAllTickets();
-        return response()->json($tickets);
+        $tickets = Ticket::all();
+
+        return response()->json($tickets, 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/tickets/{ticketId}",
+     *     summary="Get a single ticket",
+     *     tags={"Ticket"},
+     *     @OA\Parameter(
+     *         name="ticketId",
+     *         in="path",
+     *         required=true,
+     *         description="Ticket ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Ticket details"
+     *     )
+     * )
+     */
+    public function show($ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+
+        return response()->json($ticket, 200);
     }
 
     /**
@@ -84,37 +121,18 @@ class TicketController extends Controller
      *     )
      * )
      */
-    public function updateStatus(Request $request, $ticketId)
+    public function update(Request $request, $ticketId)
     {
-        // ...existing code...
-        $ticket = Ticket::where('id', $ticketId)->firstOrFail();
-        $updatedTicket = $this->ticketService->updateTicketStatus($ticket, $request->status);
-        return response()->json($updatedTicket);
-    }
+        $ticket = Ticket::findOrFail($ticketId);
 
-    /**
-     * @OA\Get(
-     *     path="/tickets/{ticketId}",
-     *     summary="Get a single ticket",
-     *     tags={"Ticket"},
-     *     @OA\Parameter(
-     *         name="ticketId",
-     *         in="path",
-     *         required=true,
-     *         description="Ticket ID",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Ticket details"
-     *     )
-     * )
-     */
-    public function show($ticketId)
-    {
-        // ...existing code...
-        $ticket = $this->ticketService->getTicketById($ticketId);
-        return response()->json($ticket);
+        $data = $request->validate([
+            'status' => 'required|string',
+            'agent_id' => 'nullable|integer',
+        ]);
+
+        $ticket->update($data);
+
+        return response()->json($ticket, 200);
     }
 
     /**
@@ -137,8 +155,10 @@ class TicketController extends Controller
      */
     public function destroy($ticketId)
     {
-        // ...existing code...
-        $this->ticketService->deleteTicket($ticketId);
-        return response()->json(['message' => 'Ticket deleted successfully']);
+        $ticket = Ticket::findOrFail($ticketId);
+
+        $ticket->delete();
+
+        return response()->json(['message' => 'Ticket deleted successfully'], 200);
     }
 }
