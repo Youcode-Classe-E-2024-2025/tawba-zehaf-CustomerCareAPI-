@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
@@ -26,5 +26,39 @@ class AuthService
         $token = $user->createToken('authToken')->plainTextToken;
 
         return ['user' => $user, 'token' => $token];
+    }
+
+    /**
+     * Authentifie un utilisateur et génère un token.
+     *
+     * @param array $credentials
+     * @return array
+     * @throws \Exception
+     */
+    public function login(array $credentials): array
+    {
+        // Vérifier les identifiants
+        if (!Auth::attempt($credentials)) {
+            throw new \Exception('Invalid credentials');
+        }
+
+        // Récupérer l'utilisateur authentifié
+        $user = Auth::user();
+
+        // Générer un token
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return ['user' => $user, 'token' => $token];
+    }
+
+    /**
+     * Révoque tous les tokens de l'utilisateur authentifié.
+     *
+     * @param User $user
+     * @return void
+     */
+    public function logout(User $user): void
+    {
+        $user->tokens()->delete();
     }
 }
