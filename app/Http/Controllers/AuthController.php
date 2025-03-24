@@ -6,7 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-
+/**
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     description="Utilisez un Bearer token pour accéder aux endpoints API",
+ *     name="Authorization",
+ *     in="header",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     securityScheme="sanctum"
+ * )
+ */
 class AuthController extends Controller
 {
     /**
