@@ -48,18 +48,22 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
+    
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
-            return response()->json(['user' => $user, 'token' => $token], 200);
+        try {
+            $result = $this->authService->login($credentials);
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 401);
         }
-
-        return response()->json(['message' => 'Unauthorized'], 401);
     }
+
 /**
  * @OA\Post(
  *     path="/api/logout",
@@ -85,10 +89,10 @@ class AuthController extends Controller
  * )
  */
 public function logout(Request $request)
-{
-    $request->user()->tokens()->delete();
-    return response()->json(['message' => 'Logged out successfully'], 200);
-}
+    {
+        $this->authService->logout($request->user());
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
 
     /**
      * @OA\Post(
