@@ -15,10 +15,13 @@ class MessageController extends Controller
 {
     protected $responseService;
 
-    public function __construct(MessageService $responseService)
+    protected $messageService;
+
+    public function __construct(MessageService $messageService)
     {
-        $this->responseService = $responseService;
+        $this->messageService = $messageService;
     }
+
 
     /**
      * @OA\Post(
@@ -59,7 +62,12 @@ class MessageController extends Controller
      */
     public function store(Request $request, $ticketId)
     {
-        $response = $this->responseService->createResponse($request->all(), $ticketId);
+        $validatedData = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $response = $this->messageService->createResponse($validatedData, $ticketId);
+
         return response()->json($response, 201);
     }
 
@@ -98,7 +106,8 @@ class MessageController extends Controller
      */
     public function index($ticketId)
     {
-        $responses = $this->responseService->getMessagesForTicket($ticketId);
+        $responses = $this->messageService->getMessagesForTicket($ticketId);
+
         return response()->json($responses);
     }
 }
