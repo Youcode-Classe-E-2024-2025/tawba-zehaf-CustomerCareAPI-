@@ -13,9 +13,11 @@ class MessageFactory extends Factory
     public function definition()
     {
         return [
-            'content' => $this->faker->sentence,
-            'ticket_id' => Ticket::factory(),
-            'user_id' => User::factory(),
+            'ticket_id' => Ticket::factory(), // Assumes you have a Ticket factory
+            'user_id' => User::factory(), // Assumes you have a User factory
+            'content' => $this->faker->paragraph,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
