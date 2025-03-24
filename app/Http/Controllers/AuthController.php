@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +42,12 @@ class AuthController extends Controller
      *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -110,13 +116,7 @@ public function logout(Request $request)
     public function register(RegisterRequest $request)
     {
         $validatedData = $request->validated();
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-        ]);
-
-        $token = $user->createToken('authToken')->plainTextToken;
-        return response()->json(['user' => $user, 'token' => $token], 201);
+        $result = $this->authService->register($validatedData);
+        return response()->json($result, 201);
     }
 }
