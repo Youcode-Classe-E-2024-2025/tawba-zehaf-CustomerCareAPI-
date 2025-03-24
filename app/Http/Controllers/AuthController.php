@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Http\Requests\RegisterRequest;
 /**
  * @OA\SecurityScheme(
  *     type="http",
@@ -106,14 +107,9 @@ public function logout(Request $request)
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
-
+        $validatedData = $request->validated();
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
