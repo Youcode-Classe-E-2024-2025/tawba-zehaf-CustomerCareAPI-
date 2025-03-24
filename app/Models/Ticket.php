@@ -32,9 +32,9 @@ class Ticket extends Model
     }
 
     // Définir la relation avec le modèle Response (Réponses aux tickets)
-    public function responses()
+    public function messages()
     {
-        return $this->hasMany(Response::class);
+        return $this->hasMany(Message::class);
     }
 
     // Définir la relation avec le modèle ActivityLog (Historique des actions)

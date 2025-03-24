@@ -66,11 +66,11 @@ class MessageController extends Controller
             'content' => 'required|string',
         ]);
 
-        $response = $this->messageService->createResponse($validatedData, $ticketId);
+        // Appeler la méthode correcte du service
+        $message = $this->messageService->createMessage($validatedData, $ticketId);
 
-        return response()->json($response, 201);
+        return response()->json($message, 201);
     }
-
     /**
      * @OA\Get(
      *     path="/api/tickets/{ticketId}/messages",
@@ -106,8 +106,10 @@ class MessageController extends Controller
      */
     public function index($ticketId)
     {
-        $responses = $this->messageService->getMessagesForTicket($ticketId);
-
-        return response()->json($responses);
+        $messages = $this->messageService->getMessagesForTicket($ticketId);
+    
+        return response()->json([
+            'data' => $messages,
+        ]);
     }
 }

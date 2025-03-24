@@ -35,6 +35,7 @@ class MessageControllerTest extends TestCase
         // Vérifier que le message a été créé dans la base de données
         $this->assertDatabaseHas('messages', [
             'ticket_id' => $ticket->id,
+            'user_id' => $user->id, // Vérifier que l'utilisateur est correctement associé
             'content' => 'This is a test message',
         ]);
     }
@@ -54,6 +55,11 @@ class MessageControllerTest extends TestCase
 
         // Vérifier la réponse
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
+        $response->assertJsonCount(3, 'data'); // Vérifie que 3 messages sont retournés
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'ticket_id', 'user_id', 'content', 'created_at'],
+            ],
+        ]);
     }
 }

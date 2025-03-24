@@ -13,7 +13,7 @@ class MessageService
      * @param int $ticketId
      * @return Message
      */
-    public function createResponse(array $data, $ticketId)
+    public function createMessage(array $data, $ticketId)
     {
         // Ensure the ticket exists
         $ticket = Ticket::findOrFail($ticketId);
@@ -32,12 +32,13 @@ class MessageService
      * @param int $ticketId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getMessagesForTicket($ticketId)
-    {
-        // Ensure the ticket exists
-        Ticket::findOrFail($ticketId);
-
-        // Fetch and return messages for the ticket
-        return Message::where('ticket_id', $ticketId)->get();
-    }
+    
+        public function getMessagesForTicket($ticketId)
+        {
+            $ticket = Ticket::findOrFail($ticketId);
+        
+            // Retourner une collection de messages
+            return $ticket->messages()->get();
+        }
+    
 }
