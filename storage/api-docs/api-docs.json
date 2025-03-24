@@ -61,62 +61,6 @@
                 }
             }
         },
-        "/api/login": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Login user",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful login",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "user": {
-                                            "type": "object"
-                                        },
-                                        "token": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
         "/api/logout": {
             "post": {
                 "tags": [
@@ -223,6 +167,62 @@
                     },
                     "422": {
                         "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "operationId": "99539a8e18179644cbac3165cf994fe5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -368,11 +368,53 @@
                 "tags": [
                     "Ticket"
                 ],
-                "summary": "Get all tickets",
+                "summary": "Get all tickets with pagination and filters",
                 "operationId": "aa5e80a6f31951862c4554396ce1b1fd",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priority",
+                        "in": "query",
+                        "description": "Filter by priority",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "agent_id",
+                        "in": "query",
+                        "description": "Filter by agent ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "Filter by client ID",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "List of tickets"
+                        "description": "List of tickets with pagination"
                     }
                 }
             },
@@ -387,7 +429,36 @@
                     "required": true,
                     "content": {
                         "application/json": {
-                            "schema": {}
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "status",
+                                    "priority",
+                                    "client_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "type": "string"
+                                    },
+                                    "client_id": {
+                                        "type": "integer"
+                                    },
+                                    "agent_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
                 },
@@ -449,8 +520,8 @@
                 "tags": [
                     "Ticket"
                 ],
-                "summary": "Update the status of a ticket",
-                "operationId": "65dace55e627e4d911ff19dcc42d5fe6",
+                "summary": "Update the status of a ticket and assign an agent",
+                "operationId": "50e950a6a51aa3f39a1e0cf7c2324b68",
                 "parameters": [
                     {
                         "name": "ticketId",
@@ -463,7 +534,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Status update",
+                    "description": "Status update and agent assignment",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -474,6 +545,9 @@
                                 "properties": {
                                     "status": {
                                         "type": "string"
+                                    },
+                                    "agent_id": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
