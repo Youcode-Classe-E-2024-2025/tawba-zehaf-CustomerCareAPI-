@@ -45,15 +45,15 @@ class TicketControllerTest extends TestCase
     public function test_index_returns_all_tickets()
     {
         $user = User::factory()->create();
-    
+        
         $this->actingAs($user, 'sanctum'); // Authentifier l'utilisateur
-    
+        
         Ticket::factory()->count(3)->create();
-    
+        
         $response = $this->getJson('/api/tickets');
-    
+        
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
+        $response->assertJsonCount(3, 'data');
     }
     public function test_show_returns_single_ticket()
 {
