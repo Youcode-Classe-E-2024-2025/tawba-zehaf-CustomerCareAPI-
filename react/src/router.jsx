@@ -8,6 +8,7 @@ import TicketList from "./components/tickets/TicketList.jsx";
 import TicketDetails from "./components/tickets/TicketDetails.jsx";
 import TicketForm from "./components/tickets/TicketForm.jsx";
 import NotFound from "./views/notfound.jsx";
+import TicketMessages from "./components/tickets/TicketMessages.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: "tickets/:ticketId", element: <TicketDetails /> },
       { path: "tickets/:ticketId/activity", element: <Activity /> },
       { path: "tickets/:ticketId/edit", element: <TicketForm /> },
+      { path: "tickets/:ticketId/messages", element: <TicketMessages /> },
     ],
   },
   {

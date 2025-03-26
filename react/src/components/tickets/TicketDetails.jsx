@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import TicketMessages from './TicketMessages.jsx';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:8000/api/tickets/${ticketId}`, {
           headers: { Authorization: token ? `Bearer ${token}` : undefined }
         });
@@ -28,23 +29,7 @@ const TicketDetails = () => {
     fetchTicket();
   }, [ticketId]);
 
-  const handleDelete = async () => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce ticket ?")) {
-      try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:8000/api/tickets/${ticketId}`, {
-          headers: { Authorization: token ? `Bearer ${token}` : undefined }
-        });
-        navigate("/tickets");
-      } catch (err) {
-        console.error(err);
-        setError("Erreur lors de la suppression du ticket");
-      }
-    }
-  };
-
-  if (loading)
-    return <div className="p-4">Chargement des détails du ticket...</div>;
+  if (loading) return <div className="p-4">Chargement des détails du ticket...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
   return (
@@ -61,11 +46,21 @@ const TicketDetails = () => {
             <Link to="/tickets" className="text-blue-500 hover:underline">
               Retour à la liste des tickets
             </Link>
-            <Link to={`/tickets/${ticket.id}/activity`} className="text-blue-500 hover:underline">
-  Voir l'activité du ticket
-</Link>
             <button 
-              onClick={handleDelete} 
+              onClick={async () => {
+                if (window.confirm("Êtes-vous sûr de vouloir supprimer ce ticket ?")) {
+                  try {
+                    const token = localStorage.getItem("token");
+                    await axios.delete(`http://localhost:8000/api/tickets/${ticketId}`, {
+                      headers: { Authorization: token ? `Bearer ${token}` : undefined }
+                    });
+                    navigate("/tickets");
+                  } catch (err) {
+                    console.error(err);
+                    setError("Erreur lors de la suppression du ticket");
+                  }
+                }
+              }} 
               className="text-red-500 hover:underline"
             >
               Supprimer le ticket
@@ -73,8 +68,13 @@ const TicketDetails = () => {
           </div>
         </div>
       ) : (
-        <div>Aucun ticket trouvé.</div>
+        <p>Aucun ticket trouvé.</p>
       )}
+
+      {/* Render TicketMessages component below ticket details */}
+      <div className="mt-8">
+        <TicketMessages />
+      </div>
     </div>
   );
 };
