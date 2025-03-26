@@ -21,6 +21,7 @@ const router = createBrowserRouter([
       { path: "tickets", element: <TicketList /> },
       { path: "tickets/create", element: <TicketForm /> },
       { path: "tickets/:ticketId", element: <TicketDetails /> },
+      { path: "tickets/:ticketId/activity", element: <Activity /> },
       { path: "tickets/:ticketId/edit", element: <TicketForm /> },
     ],
   },

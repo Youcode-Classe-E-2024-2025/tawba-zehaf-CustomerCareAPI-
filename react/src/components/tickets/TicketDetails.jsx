@@ -61,6 +61,9 @@ const TicketDetails = () => {
             <Link to="/tickets" className="text-blue-500 hover:underline">
               Retour à la liste des tickets
             </Link>
+            <Link to={`/tickets/${ticket.id}/activity`} className="text-blue-500 hover:underline">
+  Voir l'activité du ticket
+</Link>
             <button 
               onClick={handleDelete} 
               className="text-red-500 hover:underline"
