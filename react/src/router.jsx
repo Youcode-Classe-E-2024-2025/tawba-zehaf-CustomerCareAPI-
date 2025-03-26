@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
+import Dashboard from "./views/Dashboard.jsx";
+import Activity from "./views/Activity.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import TicketList from "./components/tickets/TicketList.jsx";
@@ -12,6 +14,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />, // App should include layout components (Header, Sidebar, Outlet)
     children: [
+      { path: "home", element: <Dashboard /> },
+      { path: "activity", element: <Activity /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "tickets", element: <TicketList /> },
