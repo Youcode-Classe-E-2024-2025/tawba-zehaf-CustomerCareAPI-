@@ -7,11 +7,12 @@ const TicketForm = () => {
   const { ticketId } = useParams(); // exists if updating an existing ticket
   const isEditMode = Boolean(ticketId);
 
+  // Added client_id to the initial ticketData
   const [ticketData, setTicketData] = useState({
     title: '',
     description: '',
     status: 'open',
-    priority: 'low'
+    priority: 'low',
   });
   const [error, setError] = useState('');
 
@@ -28,7 +29,8 @@ const TicketForm = () => {
             title: response.data.title,
             description: response.data.description,
             status: response.data.status,
-            priority: response.data.priority
+            priority: response.data.priority,
+            client_id: response.data.client_id || '' // load client id if available
           });
         } catch {
           setError('Erreur lors du chargement du ticket');
@@ -52,13 +54,13 @@ const TicketForm = () => {
         });
       } else {
         await axios.post('http://localhost:8000/api/tickets', ticketData, {
-          headers: { Authorization: token ? `Bearer ${token}` : undefined }
+          headers: { Authorization: token ? `Bearer ${token}` : undefined, 'Accept': 'application/json' }
         });
       }
       navigate('/tickets');
     } catch (err) {
-      console.error(err);
-      setError("Erreur lors de la soumission du ticket");
+      console.error("Erreur lors de la soumission du ticket:", err.response ? err.response.data : err);
+      setError(`Erreur lors de la soumission du ticket: ${err.response?.data?.message || "Vérifiez votre API"}`);
     }
   };
 

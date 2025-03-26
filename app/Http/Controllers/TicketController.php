@@ -38,20 +38,25 @@ class TicketController extends Controller
      * )
      */
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'title'       => 'required|string',
-            'description' => 'required|string',
-            'status'      => 'required|string',
-            'priority'    => 'required|string',
-            'client_id'   => 'required|integer',
-            'agent_id'    => 'nullable|integer',
-        ]);
+{
+    // Valider les données entrantes
+    $validated = $request->validate([
+        'title'       => 'required|string|max:255',
+        'description' => 'required|string',
+        'status'      => 'required|string',
+        'priority'    => 'required|string',
+    //    'client_id'   => 'required|integer', 
+    //    // Ajoutez cette ligne pour valider l'ID de l'agent
+    //     'agent_id'    => 'nullable|integer',
+    ]);
+    
+    // Associer le ticket à l'utilisateur authentifié (client)
+    $ticket = Ticket::create(array_merge($validated, [
+        'client_id' => auth()->id(), // ou fournir une valeur par défaut appropriée
+    ]));
 
-        $ticket = Ticket::create($data);
-
-        return response()->json($ticket, 201);
-    }
+    return response()->json($ticket, 201);
+}
 
     /**
      * @OA\Get(
