@@ -17,10 +17,7 @@ const Header = () => {
               <Link to="/tickets/create" className="hover:underline">Nouveau Ticket</Link>
             </li>
             <li>
-              <Link to="/login" className="hover:underline">Se connecter</Link>
-            </li>
-            <li>
-              <Link to="/register" className="hover:underline">S'inscrire</Link>
+              <Link to="/logout" className="hover:underline">Se déconnecter</Link>
             </li>
           </ul>
         </nav>
