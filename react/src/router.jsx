@@ -9,6 +9,7 @@ import TicketDetails from "./components/tickets/TicketDetails.jsx";
 import TicketForm from "./components/tickets/TicketForm.jsx";
 import NotFound from "./views/notfound.jsx";
 import TicketMessages from "./components/tickets/TicketMessages.jsx";
+import Logout from "./pages/Logout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       { path: "tickets/:ticketId/activity", element: <Activity /> },
       { path: "tickets/:ticketId/edit", element: <TicketForm /> },
       { path: "tickets/:ticketId/messages", element: <TicketMessages /> },
+      {
+        path: "logout",
+        element: <Logout />,
+      },
     ],
   },
   {
