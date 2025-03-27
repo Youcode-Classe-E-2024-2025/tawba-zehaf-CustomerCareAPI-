@@ -95,15 +95,15 @@ const TicketForm = () => {
         <div>
           <label className="block">Status</label>
           <select
-            name="status"
-            value={ticketData.status}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="open">Open</option>
-            <option value="in-progress">In Progress</option>
-            <option value="closed">Closed</option>
-          </select>
+  name="status"
+  value={ticketData.status}
+  onChange={handleChange}
+  className="w-full border p-2 rounded"
+>
+  <option value="open">Open</option>
+  <option value="in_progress">In Progress</option>
+  <option value="closed">Closed</option>
+</select>
         </div>
         <div>
           <label className="block">Priorité</label>
