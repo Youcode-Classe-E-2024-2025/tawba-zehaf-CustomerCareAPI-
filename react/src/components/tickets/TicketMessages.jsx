@@ -17,10 +17,22 @@ const TicketMessages = () => {
         const response = await axios.get(`http://localhost:8000/api/tickets/${ticketId}/messages`, {
           headers: { Authorization: token ? `Bearer ${token}` : undefined }
         });
-        setMessages(response.data);
+        
+        // Make sure we're working with an array of messages
+        let messagesData;
+        if (Array.isArray(response.data)) {
+          messagesData = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          messagesData = response.data.data;
+        } else {
+          console.warn('Unexpected API response format:', response.data);
+          messagesData = [];
+        }
+        
+        setMessages(messagesData);
         setError('');
       } catch (err) {
-        console.error(err.response || err);
+        console.error("Error fetching messages:", err.response || err);
         setError('Erreur lors du chargement des messages');
       } finally {
         setLoading(false);
@@ -35,20 +47,48 @@ const TicketMessages = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      console.log("Sending to:", `http://localhost:8000/api/tickets/${ticketId}/messages`);
+      console.log("Message data:", { content: newMessage });
+      
       const response = await axios.post(
         `http://localhost:8000/api/tickets/${ticketId}/messages`,
-        { message: newMessage },
+        { 
+          // Using "content" as the API expects this field name
+          content: newMessage,
+          ticket_id: ticketId
+        },
         {
-          headers: { Authorization: token ? `Bearer ${token}` : undefined }
+          headers: { 
+            Authorization: token ? `Bearer ${token}` : undefined,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
         }
       );
-      // Append the new message to the list
-      setMessages(prev => [...prev, response.data]);
+      
+      console.log("Response from server:", response.data);
+      
+      // Get the new message from the response
+      const newMessageData = response.data.data || response.data;
+      
+      // Safely update the messages array
+      setMessages(prev => {
+        if (Array.isArray(prev)) {
+          return [...prev, newMessageData];
+        } else {
+          console.warn("Previous messages was not an array:", prev);
+          return [newMessageData];
+        }
+      });
+      
       setNewMessage('');
       setError('');
     } catch (err) {
-      console.error("Detailed error:", err.response ? err.response.data : err);
-      setError("Erreur lors de l'envoi du message");
+      console.error("Error submitting message:", err);
+      console.error("Response data:", err.response?.data);
+      console.error("Response status:", err.response?.status);
+      setError("Erreur lors de l'envoi du message: " + 
+              (err.response?.data?.message || err.message || "Erreur inconnue"));
     }
   };
 
@@ -63,7 +103,7 @@ const TicketMessages = () => {
           {messages.map(msg => (
             <li key={msg.id} className="bg-gray-100 p-2 rounded">
               <p>
-                <strong>{msg.user ? msg.user.name : 'Anonyme'}:</strong> {msg.message}
+                <strong>{msg.user ? msg.user.name : 'Anonyme'}:</strong> {msg.content || msg.message}
               </p>
               <p className="text-xs text-gray-600">{new Date(msg.created_at).toLocaleString()}</p>
             </li>
@@ -77,7 +117,7 @@ const TicketMessages = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <textarea
-              name="message"
+              name="content" // Changed to match API field name
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Tapez votre message..."
