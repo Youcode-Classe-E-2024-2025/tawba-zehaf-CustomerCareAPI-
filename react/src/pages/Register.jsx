@@ -20,13 +20,13 @@ const Register = () => {
         password,
         role, // include the selected role in the payload
       });
-      // On successful registration, you could directly login or redirect
+      
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
-      navigate('/home');
+      navigate('/login');
     } catch (err) {
       console.error(err.response?.data || err);
-      setError('Erreur lors de l’inscription');
+      setError(err.response?.data?.message || 'Erreur lors de l’inscription');
     }
   };
 

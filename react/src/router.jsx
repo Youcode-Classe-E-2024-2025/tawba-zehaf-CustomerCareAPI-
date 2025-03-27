@@ -10,6 +10,8 @@ import TicketMessages from "./components/tickets/TicketMessages.jsx";
 import Activity from "./views/Activity.jsx";
 import Logout from "./pages/Logout.jsx";
 import NotFound from "./views/notfound.jsx";
+import AssignTicket from "./components/tickets/AssignTicket.jsx";
+import AgentTicketList from "./components/tickets/AgentTicketList.jsx";
 
 const router = createBrowserRouter([
   // Public routes (without layout)
@@ -33,8 +35,13 @@ const router = createBrowserRouter([
       { path: "tickets/:ticketId/activity", element: <Activity /> },
       { path: "tickets/:ticketId/edit", element: <TicketForm /> },
       { path: "tickets/:ticketId/messages", element: <TicketMessages /> },
+      {
+        path: "activity",
+        element: <Activity />
+      },
       { path: "logout", element: <Logout /> },
-      // Additional authenticated routes...
+      { path: "tickets/assigned", element: <AgentTicketList /> },
+      { path: "admin/assign-tickets/:ticketId", element: <AssignTicket /> },
     ],
   },
   {
