@@ -12,8 +12,23 @@ import Logout from "./pages/Logout.jsx";
 import NotFound from "./views/notfound.jsx";
 import AssignTicket from "./components/tickets/AssignTicket.jsx";
 import AgentTicketList from "./components/tickets/AgentTicketList.jsx";
+import AssignedTickets from "./views/AssignedTickets.jsx";
+import ClosedTickets from "./views/ClosedTickets.jsx";
+import MyTickets from "./views/MyTickets.jsx";
+import { Navigate } from 'react-router-dom';
+
+import ClientRoute from "./components/ClientRoute.jsx";
 
 const router = createBrowserRouter([
+  // Utilisation dans les routes
+  {
+    path: "tickets/assigned",
+    element: (
+      <ClientRoute>
+        <AssignedTickets />
+      </ClientRoute>
+    ),
+  },
   // Public routes (without layout)
   {
     path: "/login",
@@ -42,6 +57,9 @@ const router = createBrowserRouter([
       { path: "logout", element: <Logout /> },
       { path: "tickets/assigned", element: <AgentTicketList /> },
       { path: "admin/assign-tickets/:ticketId", element: <AssignTicket /> },
+      // { path: "tickets/assigned", element: <AssignedTickets /> },
+      { path: "tickets/closed", element: <ClosedTickets /> },
+      { path: "tickets/my-tickets", element: <MyTickets /> },
     ],
   },
   {

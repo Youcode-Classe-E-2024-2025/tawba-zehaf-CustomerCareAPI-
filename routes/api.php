@@ -28,3 +28,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tickets/{ticketId}/messages', [MessageController::class, 'store']);
     Route::get('/tickets/{ticketId}/messages', [MessageController::class, 'index']);
 });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/tickets', function (Request $request) {
+        $user = $request->user();
+
+        if ($user->role === 'admin') {
+            return app(TicketController::class)->adminTickets($request);
+        } elseif ($user->role === 'agent') {
+            return app(TicketController::class)->agentTickets($request);
+        } elseif ($user->role === 'client') {
+            return app(TicketController::class)->clientTickets($request);
+        }
+
+        return response()->json(['message' => 'Rôle non autorisé'], 403);
+    });
+});

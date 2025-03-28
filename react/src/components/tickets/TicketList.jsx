@@ -40,8 +40,10 @@ const TicketList = () => {
       setTotalPages(response.data.last_page || 1);
       setError("");
     } catch (err) {
-      console.error(err);
+      console.error("Erreur lors de la récupération des tickets :", err);
+      console.error("Détails de l'erreur :", err.response?.data);
       setError("Erreur au chargement des tickets.");
+    
     } finally {
       setLoading(false);
     }
@@ -117,7 +119,7 @@ const TicketList = () => {
         <div className="p-4 text-red-500">{error}</div>
       ) : (
         <>
-          {tickets.length > 0 ? (
+          { tickets && tickets.length > 0 ? (
             <div className="space-y-4">
               {tickets.map((ticket) => (
                 <TicketItem key={ticket.id} ticket={ticket} />

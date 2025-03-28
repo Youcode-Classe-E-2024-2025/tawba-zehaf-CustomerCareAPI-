@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const Header = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   // normalize the role to lowercase in case of differences
-  const role = user ? user.role.toLowerCase() : 'client';
-
+  const  role = user ? user.role.toLowerCase() : 'client';
+console.log(role);
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">

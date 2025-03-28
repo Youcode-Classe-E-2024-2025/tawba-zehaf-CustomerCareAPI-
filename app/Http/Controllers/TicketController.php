@@ -121,8 +121,22 @@ class TicketController extends Controller
         $perPage = $request->input('per_page', 15);
         $tickets = $query->paginate($perPage);
 
-        return response()->json($tickets, 200);
-    }
+            return response()->json($tickets, 200);
+        }
+
+    //     if ($user->role === 'admin') {
+    //         // Logique pour les administrateurs
+    //         return response()->json(['tickets' => 'Tous les tickets pour admin']);
+    //     } elseif ($user->role === 'agent') {
+    //         // Logique pour les agents
+    //         return response()->json(['tickets' => 'Tickets assignés à l\'agent']);
+    //     } elseif ($user->role === 'client') {
+    //         // Logique pour les clients
+    //         return response()->json(['tickets' => 'Tickets créés par le client']);
+    //     }
+
+    //     return response()->json(['message' => 'Rôle non autorisé'], 403);
+    // }
 
     /**
      * @OA\Get(
@@ -215,5 +229,22 @@ class TicketController extends Controller
         $ticket->delete();
 
         return response()->json(['message' => 'Ticket deleted successfully'], 200);
+    }
+    public function adminTickets(Request $request)
+    {
+        // Logique pour récupérer tous les tickets (admin)
+        return response()->json(['tickets' => 'Tous les tickets pour admin']);
+    }
+
+    public function agentTickets(Request $request)
+    {
+        // Logique pour récupérer les tickets assignés à l'agent
+        return response()->json(['tickets' => 'Tickets assignés à l\'agent']);
+    }
+
+    public function clientTickets(Request $request)
+    {
+        // Logique pour récupérer les tickets créés par le client
+        return response()->json(['tickets' => 'Tickets créés par le client']);
     }
 }
