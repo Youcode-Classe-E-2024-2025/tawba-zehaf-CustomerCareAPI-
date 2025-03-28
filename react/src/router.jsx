@@ -18,6 +18,7 @@ import MyTickets from "./views/MyTickets.jsx";
 import { Navigate } from 'react-router-dom';
 
 import ClientRoute from "./components/ClientRoute.jsx";
+import ManagePage from './components/admin/ManagePage';
 
 const router = createBrowserRouter([
   // Utilisation dans les routes
@@ -56,20 +57,30 @@ const router = createBrowserRouter([
       },
       { path: "logout", element: <Logout /> },
       { path: "tickets/assigned", element: <AgentTicketList /> },
-      { path: "admin/assign-tickets/:ticketId", element: <AssignTicket /> },
       {
-        path: '/agent/tickets',
-        element: <AgentTicketList />,
+        path: '/admin/assign-tickets',
+        element: <div>Sélectionnez un ticket à attribuer.</div>, // Page par défaut
       },
-      // { path: "tickets/assigned", element: <AssignedTickets /> },
+      {
+        path: '/admin/assign-tickets/:ticketId',
+        element: <AssignTicket />,
+      },
+      { 
+        path: '/agent/tickets',
+        element: <AgentTicketList />
+      },
       { path: "tickets/closed", element: <ClosedTickets /> },
       { path: "tickets/my-tickets", element: <MyTickets /> },
-    ],
+      {
+        path: '/admin/manage',
+        element: <ManagePage />,
+      },
+    ]
   },
   {
     path: "*",
     element: <NotFound />,
-  },
+  }
 ]);
 
 export default router;

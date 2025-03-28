@@ -11,7 +11,7 @@ const AssignTicket = ({ ticketId }) => {
     const fetchAgents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8000/api/users', {
+        const response = await axios.get('http://localhost:8000/api/tickets', {
           headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
 
