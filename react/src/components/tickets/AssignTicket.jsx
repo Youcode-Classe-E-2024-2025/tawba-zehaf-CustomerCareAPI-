@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const AssignTicket = ({ ticketId }) => {
+const AssignTicket = () => {
+  const { ticketId } = useParams(); // Récupère le ticketId depuis l'URL
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -11,7 +13,7 @@ const AssignTicket = ({ ticketId }) => {
     const fetchAgents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8000/api/tickets', {
+        const response = await axios.get('http://localhost:8000/api/users', {
           headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
 
@@ -44,9 +46,13 @@ const AssignTicket = ({ ticketId }) => {
     }
   };
 
+  if (!ticketId) {
+    return <div>Sélectionnez un ticket à attribuer.</div>;
+  }
+
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Attribuer un ticket</h2>
+      <h2 className="text-xl font-bold mb-4">Attribuer le ticket #{ticketId}</h2>
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <div className="mb-4">

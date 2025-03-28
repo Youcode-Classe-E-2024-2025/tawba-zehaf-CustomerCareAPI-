@@ -23,7 +23,7 @@ console.log(role);
             { role === 'admin' && (
               <>
                 <li>
-                  <Link to="/admin/assign-tickets" className="hover:underline">Attribuer Tickets</Link>
+                  <Link to="/admin/assign-tickets/1" className="hover:underline">Attribuer Tickets</Link>
                 </li>
                 <li>
                   <Link to="/admin/manage" className="hover:underline">Gestion</Link>

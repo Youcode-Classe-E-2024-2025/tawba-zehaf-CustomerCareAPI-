@@ -6,7 +6,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ActivityLogController;
-
+use App\Http\Controllers\UserController;
 
 
 Route::get('/tickets/{ticketId}', [TicketController::class, 'show']);
@@ -31,18 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tickets/{ticketId}/messages', [MessageController::class, 'store']);
     Route::get('/tickets/{ticketId}/messages', [MessageController::class, 'index']);
 });
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/tickets', function (Request $request) {
-//         $user = $request->user();
-
-//         if ($user->role === 'admin') {
-//             return app(TicketController::class)->adminTickets($request);
-//         } elseif ($user->role === 'agent') {
-//             return app(TicketController::class)->agentTickets($request);
-//         } elseif ($user->role === 'client') {
-//             return app(TicketController::class)->clientTickets($request);
-//         }
-
-//         return response()->json(['message' => 'Rôle non autorisé'], 403);
-//     });
-// });
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/users/agents', [UserController::class, 'index']); // Retourne les agents
+});

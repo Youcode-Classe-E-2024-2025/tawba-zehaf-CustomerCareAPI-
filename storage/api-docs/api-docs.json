@@ -605,6 +605,70 @@
                     }
                 }
             }
+        },
+        "/api/users/agents": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Récupérer tous les agents",
+                "description": "Retourne une liste de tous les utilisateurs ayant le rôle 'agent'. Accessible uniquement aux administrateurs.",
+                "operationId": "getAgents",
+                "responses": {
+                    "200": {
+                        "description": "Liste des agents récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Agent 1"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "agent1@example.com"
+                                            },
+                                            "role": {
+                                                "type": "string",
+                                                "example": "agent"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -635,6 +699,10 @@
         {
             "name": "Ticket",
             "description": "Ticket"
+        },
+        {
+            "name": "Users",
+            "description": "Users"
         }
     ]
 }
