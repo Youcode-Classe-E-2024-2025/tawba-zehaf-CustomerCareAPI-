@@ -45,9 +45,8 @@ class TicketController extends Controller
         'description' => 'required|string',
         'status'      => 'required|string',
         'priority'    => 'required|string',
-    //    'client_id'   => 'required|integer', 
-    //    // Ajoutez cette ligne pour valider l'ID de l'agent
-    //     'agent_id'    => 'nullable|integer',
+      'client_id'   => 'required|integer',
+        'agent_id'    => 'nullable|integer',
     ]);
     
     // Associer le ticket à l'utilisateur authentifié (client)
@@ -55,7 +54,7 @@ class TicketController extends Controller
         'client_id' => auth()->id(), // ou fournir une valeur par défaut appropriée
     ]));
 
-    return response()->json($ticket, 201);
+    // return response()->json($ticket, 201);
 }
 
     /**
@@ -197,6 +196,8 @@ class TicketController extends Controller
         $data = $request->validate([
             'status'   => 'required|string',
             'agent_id' => 'nullable|integer',
+            'priority'    => 'nullable|string|in:low,medium,high',
+    'description' => 'nullable|string',
         ]);
 
         $ticket->update($data);
