@@ -42,6 +42,12 @@ const TicketDetails = () => {
           <p><strong>Description:</strong> {ticket.description}</p>
           <p><strong>Status:</strong> {ticket.status}</p>
           <p><strong>Priorité:</strong> {ticket.priority}</p>
+          <div>
+      <h1>Détails du Ticket #{ticketId}</h1>
+      <Link to={`/admin/assign-tickets/${ticketId}`} className="hover:underline text-blue-500">
+        Attribuer ce Ticket
+      </Link>
+    </div>
           <div className="mt-4 flex space-x-4">
             <Link to="/tickets" className="text-blue-500 hover:underline">
               Retour à la liste des tickets

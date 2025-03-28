@@ -1,60 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const AssignTicket = () => {
-  const { ticketId } = useParams(); // Récupère le ticketId depuis l'URL
+  const { ticketId } = useParams(); // Récupère ticketId depuis l'URL
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Récupérer la liste des agents
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8000/api/users', {
+        const response = await axios.get('http://localhost:8000/api/users/agents', {
           headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
 
-        // Filtrer uniquement les utilisateurs ayant le rôle "agent"
-        const agentsList = response.data.filter(user => user.role === 'agent');
-        setAgents(agentsList);
+        setAgents(response.data); // Assurez-vous que l'API retourne une liste d'agents
       } catch (err) {
-        console.error(err);
-        setErrorMessage("Erreur lors du chargement des agents.");
+        console.error("Erreur lors du chargement des agents :", err);
+        setErrorMessage("Impossible de charger la liste des agents.");
       }
     };
 
     fetchAgents();
   }, []);
 
+  // Attribuer un ticket à un agent
   const handleAssign = async () => {
+    if (!selectedAgent) {
+      setErrorMessage("Veuillez sélectionner un agent.");
+      return;
+    }
+  
+    console.log("Assigning ticket:", { ticketId, agent_id: selectedAgent });
+  
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:8000/api/tickets/${ticketId}/assign`, {
+      const response = await axios.post(`http://localhost:8000/tickets/${ticketId}/assign`, {
         agent_id: selectedAgent,
       }, {
         headers: { Authorization: token ? `Bearer ${token}` : undefined },
       });
-
+  
+      console.log("Response:", response.data);
       setSuccessMessage('Ticket assigné avec succès.');
       setErrorMessage('');
     } catch (err) {
-      console.error(err);
-      setErrorMessage("Erreur lors de l'attribution du ticket.");
+      console.error("Erreur lors de l'attribution du ticket :", err.response?.data || err);
+      setErrorMessage("Impossible d'attribuer le ticket. Veuillez réessayer.");
     }
   };
-
-  if (!ticketId) {
-    return <div>Sélectionnez un ticket à attribuer.</div>;
-  }
-
+  
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Attribuer le ticket #{ticketId}</h2>
       {successMessage && <p className="text-green-500">{successMessage}</p>}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
       <div className="mb-4">
         <label htmlFor="agent" className="block mb-2">Sélectionnez un agent :</label>
         <select
@@ -71,6 +76,7 @@ const AssignTicket = () => {
           ))}
         </select>
       </div>
+
       <button
         onClick={handleAssign}
         disabled={!selectedAgent}
