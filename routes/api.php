@@ -20,6 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/tickets/{ticketId}', [TicketController::class, 'update']); // Mise à jour d'un ticket
     Route::delete('/tickets/{ticketId}', [TicketController::class, 'destroy']); // Suppression d'un ticket
 });
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::patch('/tickets/{ticketId}/assign', [TicketController::class, 'assignTicket']);
+});
  // Route for fetching activity logs for a ticket
  Route::get('/tickets/{ticketId}/logs', [ActivityLogController::class, 'index']);
 //  Route::middleware('auth:sanctum')->get('/activity', [ActivityLogController::class, 'all']);

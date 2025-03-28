@@ -32,7 +32,7 @@ console.log(role);
             )}
             { role === 'agent' && (
               <li>
-                <Link to="/tickets/assigned" className="hover:underline">Mes Tickets assignés</Link>
+                <Link to="/agent/tickets" className="hover:underline">Mes Tickets assignés</Link>
               </li>
             )}
             <li>

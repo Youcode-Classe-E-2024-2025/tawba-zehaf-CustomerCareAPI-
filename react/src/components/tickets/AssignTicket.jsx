@@ -1,69 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
-const AgentTicketList = () => {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Get the logged-in user; ensure that it includes the agent's id (e.g., user.id)
-  const user = JSON.parse(localStorage.getItem("user"));
-  const agentId = user ? user.id : null;
+const AssignTicket = ({ ticketId }) => {
+  const [agents, setAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const fetchTickets = async () => {
+    const fetchAgents = async () => {
       try {
         const token = localStorage.getItem('token');
-        // Call your existing endpoint (assumes it returns all tickets)
-        const response = await axios.get('http://localhost:8000/api/tickets', {
-          headers: { Authorization: token ? `Bearer ${token}` : undefined }
+        const response = await axios.get('http://localhost:8000/api/users', {
+          headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
-        const allTickets = response.data.data || response.data;
-        // Filter only tickets assigned to the current agent.
-        const assignedTickets = allTickets.filter(ticket => ticket.agent_id === agentId);
-        setTickets(assignedTickets);
-        setError('');
+
+        // Filtrer uniquement les utilisateurs ayant le rôle "agent"
+        const agentsList = response.data.filter(user => user.role === 'agent');
+        setAgents(agentsList);
       } catch (err) {
-        console.error(err.response || err);
-        setError("Erreur lors du chargement des tickets assignés");
-      } finally {
-        setLoading(false);
+        console.error(err);
+        setErrorMessage("Erreur lors du chargement des agents.");
       }
     };
 
-    if (agentId) {
-      fetchTickets();
-    } else {
-      setLoading(false);
-      setError("Aucun agent identifié");
-    }
-  }, [agentId]);
+    fetchAgents();
+  }, []);
 
-  if (loading) return <div className="p-4">Chargement...</div>;
-  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  const handleAssign = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`http://localhost:8000/api/tickets/${ticketId}/assign`, {
+        agent_id: selectedAgent,
+      }, {
+        headers: { Authorization: token ? `Bearer ${token}` : undefined },
+      });
+
+      setSuccessMessage('Ticket assigné avec succès.');
+      setErrorMessage('');
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Erreur lors de l'attribution du ticket.");
+    }
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Mes Tickets assignés</h1>
-      {tickets.length > 0 ? (
-        <ul className="space-y-2">
-          {tickets.map(ticket => (
-            <li key={ticket.id} className="bg-gray-100 p-2 rounded">
-              <Link to={`/tickets/${ticket.id}`} className="hover:underline">
-                <p><strong>{ticket.title}</strong> – {ticket.status}</p>
-                <p className="text-xs text-gray-600">
-                  Créé le: {new Date(ticket.created_at).toLocaleString()}
-                </p>
-              </Link>
-            </li>
+    <div>
+      <h2 className="text-xl font-bold mb-4">Attribuer un ticket</h2>
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      <div className="mb-4">
+        <label htmlFor="agent" className="block mb-2">Sélectionnez un agent :</label>
+        <select
+          id="agent"
+          value={selectedAgent}
+          onChange={(e) => setSelectedAgent(e.target.value)}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">-- Sélectionnez un agent --</option>
+          {agents.map(agent => (
+            <option key={agent.id} value={agent.id}>
+              {agent.name}
+            </option>
           ))}
-        </ul>
-      ) : (
-        <p>Aucun ticket assigné.</p>
-      )}
+        </select>
+      </div>
+      <button
+        onClick={handleAssign}
+        disabled={!selectedAgent}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Attribuer
+      </button>
     </div>
   );
 };
 
-export default AgentTicketList;
+export default AssignTicket;

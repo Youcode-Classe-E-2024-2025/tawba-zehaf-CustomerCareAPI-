@@ -248,4 +248,48 @@ class TicketController extends Controller
         // Logique pour récupérer les tickets créés par le client
         return response()->json(['tickets' => 'Tickets créés par le client']);
     }
+    /**
+     * @OA\Post(
+     *     path="/tickets/{ticketId}/assign",
+     *     summary="Assign a ticket to an agent",
+     *     tags={"Ticket"},
+     *     @OA\Parameter(
+     *         name="ticketId",
+     *         in="path",
+     *         required=true,
+     *         description="Ticket ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Agent ID to assign the ticket to",
+     *         @OA\JsonContent(
+     *             required={"agent_id"},
+     *             @OA\Property(property="agent_id", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Ticket assigned successfully"
+     *     )
+     * )
+     */
+public function assignTicket(Request $request, $ticketId)
+{
+    $request->validate([
+        'agent_id' => 'required|exists:users,id', // Vérifie que l'agent existe
+    ]);
+
+    $ticket = Ticket::findOrFail($ticketId);
+
+    // Vérifiez si l'utilisateur est un administrateur
+    if (auth()->user()->role !== 'admin') {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $ticket->agent_id = $request->input('agent_id');
+    $ticket->save();
+
+    return response()->json(['message' => 'Ticket assigned successfully', 'ticket' => $ticket], 200);
+}
 }

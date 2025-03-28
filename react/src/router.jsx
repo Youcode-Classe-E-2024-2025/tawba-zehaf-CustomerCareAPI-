@@ -57,6 +57,10 @@ const router = createBrowserRouter([
       { path: "logout", element: <Logout /> },
       { path: "tickets/assigned", element: <AgentTicketList /> },
       { path: "admin/assign-tickets/:ticketId", element: <AssignTicket /> },
+      {
+        path: '/agent/tickets',
+        element: <AgentTicketList />,
+      },
       // { path: "tickets/assigned", element: <AssignedTickets /> },
       { path: "tickets/closed", element: <ClosedTickets /> },
       { path: "tickets/my-tickets", element: <MyTickets /> },

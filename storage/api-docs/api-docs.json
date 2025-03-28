@@ -561,6 +561,50 @@
                     }
                 }
             }
+        },
+        "/tickets/{ticketId}/assign": {
+            "post": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Assign a ticket to an agent",
+                "operationId": "3fd3ea4119c65503d1132e16d0c662e2",
+                "parameters": [
+                    {
+                        "name": "ticketId",
+                        "in": "path",
+                        "description": "Ticket ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Agent ID to assign the ticket to",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "agent_id"
+                                ],
+                                "properties": {
+                                    "agent_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ticket assigned successfully"
+                    }
+                }
+            }
         }
     },
     "components": {
